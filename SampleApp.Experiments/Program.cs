@@ -9,7 +9,48 @@ namespace SampleApp.Experiments
     {
         static void Main(string[] args)
         {
+            const string connectionString = "Server=.;Database=music;Integrated Security=True;TrustServerCertificate=True";
+            using SampleDbContext dbContext = InitializeDatabase(connectionString);
 
+            bool continueProcessingInput = true;
+            while (continueProcessingInput)
+            {
+                PrintMenu();
+                string input = Console.ReadLine().Trim();
+
+                if (input == "1") { }
+                else if (input == "0") continueProcessingInput = false;
+                else { }
+            }
+        }
+
+        private static void PrintMenu()
+        {
+            Console.WriteLine("1. Create song");
+            Console.WriteLine("0. Exit");
+        }
+
+
+        private static SampleDbContext InitializeDatabase(string connectionString)
+        {
+            DbContextOptionsBuilder<SampleDbContext> optionsBuilder = new DbContextOptionsBuilder<SampleDbContext>();
+
+#if DEBUG
+            optionsBuilder.EnableSensitiveDataLogging(sensitiveDataLoggingEnabled: true);
+#endif
+
+            optionsBuilder.LogTo(Console.WriteLine, minimumLevel: LogLevel.Information);
+            optionsBuilder.UseSqlServer(connectionString);
+
+            SampleDbContext dbContext = new SampleDbContext(optionsBuilder.Options);
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
+
+            return dbContext;
+        }
+
+        private static void Old()
+        {
             List<string> songNames = new List<string>() { "Bohemian Rhapsody", "November Rain", "Bed of Roses" };
 
             const string connectionString = "Server=.;Database=music;Integrated Security=True;TrustServerCertificate=True";
