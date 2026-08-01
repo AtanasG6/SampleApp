@@ -18,9 +18,11 @@ namespace SampleApp.Experiments
                 PrintMenu();
                 string input = Console.ReadLine().Trim();
 
-                if (input == "1") { }
+                if (input == "1") CreateSong(dbContext);
                 else if (input == "0") continueProcessingInput = false;
-                else { }
+                else Console.WriteLine("Invalid input!");
+
+                Console.WriteLine();
             }
         }
 
@@ -47,6 +49,19 @@ namespace SampleApp.Experiments
             dbContext.Database.EnsureCreated();
 
             return dbContext;
+        }
+
+        private static void CreateSong(SampleDbContext dbContext)
+        {
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+
+            Song songToCreate = new Song { Name = name };
+
+            dbContext.Songs.Add(songToCreate);
+            dbContext.SaveChanges();
+
+            Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
         }
 
         private static void Old()
