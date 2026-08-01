@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SampleApp.Core.Interfaces;
+using SampleApp.Core.Projections.Songs;
+using SampleApp.Core.Services;
 using SampleApp.Data;
 using SampleApp.Data.Models;
-using SampleApp.Experiments.Projections;
+using SampleApp.Data.Repositories;
 
 namespace SampleApp.Experiments
 {
@@ -13,6 +16,9 @@ namespace SampleApp.Experiments
             const string connectionString = "Server=.;Database=music;Integrated Security=True;TrustServerCertificate=True";
             using SampleDbContext dbContext = InitializeDatabase(connectionString);
 
+            IRepository<Song> songRepository = new Repository<Song>(dbContext);
+            ISongService songService = new SongService(songRepository);
+
             bool continueProcessingInput = true;
             while (continueProcessingInput)
             {
@@ -22,8 +28,8 @@ namespace SampleApp.Experiments
                 PrintMenu();
                 string input = Console.ReadLine().Trim();
 
-                if (input == "1") CreateSong(dbContext);
-                else if (input == "2") GetAllSongs(dbContext);
+                if (input == "1") CreateSong(songService);
+                else if (input == "2") GetAllSongs(songService);
                 else if (input == "3") CreateArtist(dbContext);
                 else if (input == "4") GetAllArtists(dbContext);
                 else if (input == "0") continueProcessingInput = false;
@@ -61,18 +67,33 @@ namespace SampleApp.Experiments
             return dbContext;
         }
 
-        private static void CreateSong(SampleDbContext dbContext)
+        //private static void CreateSong(SampleDbContext dbContext)
+        //{
+        //    Console.Write("Name: ");
+        //    string name = Console.ReadLine().Trim();
+
+        //    Console.Write("Artist ID: ");
+        //    Guid artistId = Guid.Parse(Console.ReadLine().Trim());
+
+        //    Song songToCreate = new Song { Name = name, ArtistId = artistId };
+
+        //    dbContext.Songs.Add(songToCreate);
+        //    dbContext.SaveChanges();
+
+        //    Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
+        //}
+
+        private static void CreateSong(ISongService songService)
         {
             Console.Write("Name: ");
-            string name = Console.ReadLine();
+            string name = Console.ReadLine().Trim();
 
             Console.Write("Artist ID: ");
-            Guid artistId = Guid.Parse(Console.ReadLine());
+            Guid artistId = Guid.Parse(Console.ReadLine().Trim());
 
             Song songToCreate = new Song { Name = name, ArtistId = artistId };
 
-            dbContext.Songs.Add(songToCreate);
-            dbContext.SaveChanges();
+            songService.Create(songToCreate);
 
             Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
         }
@@ -84,30 +105,38 @@ namespace SampleApp.Experiments
         //        Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.Artist.Nickname}");
         //}
 
-        private static void GetAllSongs(SampleDbContext dbContext)
+        //private static void GetAllSongs(SampleDbContext dbContext)
+        //{
+        //    // How to download data from referenced tables?
+        //    // 1. Include(..) - eager loading 
+        //    // Drawback - it downloads all columns from the referenced table(s)
+        //    // List<Song> allSongs = dbContext.Songs.Include(x => x.Artist).ToList();
+        //    // foreach (var song in allSongs)
+        //    //     Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.Artist.Nickname}");
+
+        //    // 2. Select(..) with anonymous type(s)
+        //    // Drawback - it is not possible to return anonymous type(s) from the method
+        //    // var allSongs = dbContext.Songs.Select(x => new { Id = x.Id, Name = x.Name, ArtistNickname = x.Artist.Nickname }).ToList();
+        //    // foreach (var song in allSongs)
+        //    //     Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
+
+        //    // 3. Select(..) with static type(s)
+        //    List<SongInfoProjection> allSongs = dbContext.Songs
+        //                                                 .Select(x => new SongInfoProjection
+        //                                                 {
+        //                                                     Id = x.Id,
+        //                                                     Name = x.Name,
+        //                                                     ArtistNickname = x.Artist.Nickname
+        //                                                 })
+        //                                                 .ToList();
+        //    foreach (var song in allSongs)
+        //        Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
+        //}
+
+        private static void GetAllSongs(ISongService songService)
         {
-            // How to download data from referenced tables?
-            // 1. Include(..) - eager loading 
-            // Drawback - it downloads all columns from the referenced table(s)
-            // List<Song> allSongs = dbContext.Songs.Include(x => x.Artist).ToList();
-            // foreach (var song in allSongs)
-            //     Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.Artist.Nickname}");
+            List<SongGeneralInfoProjection> allSongs = songService.GetAllSongs().ToList();
 
-            // 2. Select(..) with anonymous type(s)
-            // Drawback - it is not possible to return anonymous type(s) from the method
-            // var allSongs = dbContext.Songs.Select(x => new { Id = x.Id, Name = x.Name, ArtistNickname = x.Artist.Nickname }).ToList();
-            // foreach (var song in allSongs)
-            //     Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
-
-            // 3. Select(..) with static type(s)
-            List<SongInfoProjection> allSongs = dbContext.Songs
-                                                         .Select(x => new SongInfoProjection
-                                                         {
-                                                             Id = x.Id,
-                                                             Name = x.Name,
-                                                             ArtistNickname = x.Artist.Nickname
-                                                         })
-                                                         .ToList();
             foreach (var song in allSongs)
                 Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
         }
@@ -115,13 +144,13 @@ namespace SampleApp.Experiments
         private static void CreateArtist(SampleDbContext dbContext)
         {
             Console.Write("First name: ");
-            string firstName = Console.ReadLine();
+            string firstName = Console.ReadLine().Trim();
 
             Console.Write("Last name: ");
-            string lastName = Console.ReadLine();
+            string lastName = Console.ReadLine().Trim();
 
             Console.Write("Nickname: ");
-            string nickname = Console.ReadLine();
+            string nickname = Console.ReadLine().Trim();
 
             Artist artistToCreate = new Artist { FirstName = firstName, LastName = lastName, Nickname = nickname, };
 
