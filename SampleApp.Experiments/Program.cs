@@ -19,6 +19,7 @@ namespace SampleApp.Experiments
                 string input = Console.ReadLine().Trim();
 
                 if (input == "1") CreateSong(dbContext);
+                else if (input == "2") GetAllSongs(dbContext);
                 else if (input == "0") continueProcessingInput = false;
                 else Console.WriteLine("Invalid input!");
 
@@ -29,6 +30,7 @@ namespace SampleApp.Experiments
         private static void PrintMenu()
         {
             Console.WriteLine("1. Create song");
+            Console.WriteLine("2. Get all songs");
             Console.WriteLine("0. Exit");
         }
 
@@ -62,6 +64,13 @@ namespace SampleApp.Experiments
             dbContext.SaveChanges();
 
             Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
+        }
+
+        private static void GetAllSongs(SampleDbContext dbContext)
+        {
+            List<Song> allSongs = dbContext.Songs.ToList();
+            foreach (var song in allSongs)
+                Console.WriteLine($"{song.Id}: {song.Name}");
         }
 
         private static void Old()
