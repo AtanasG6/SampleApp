@@ -22,6 +22,7 @@ namespace SampleApp.Experiments
                 if (input == "1") CreateSong(dbContext);
                 else if (input == "2") GetAllSongs(dbContext);
                 else if (input == "3") CreateArtist(dbContext);
+                else if (input == "4") GetAllArtists(dbContext);
                 else if (input == "0") continueProcessingInput = false;
                 else Console.WriteLine("Invalid input!");
 
@@ -34,6 +35,7 @@ namespace SampleApp.Experiments
             Console.WriteLine("1. Create song");
             Console.WriteLine("2. Get all songs");
             Console.WriteLine("3. Create artist");
+            Console.WriteLine("4. Get all artists with their songs");
             Console.WriteLine("0. Exit");
         }
 
@@ -50,7 +52,7 @@ namespace SampleApp.Experiments
             optionsBuilder.UseSqlServer(connectionString);
 
             SampleDbContext dbContext = new SampleDbContext(optionsBuilder.Options);
-            dbContext.Database.EnsureDeleted();
+            // dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
             return dbContext;
@@ -124,6 +126,43 @@ namespace SampleApp.Experiments
             dbContext.SaveChanges();
 
             Console.WriteLine($"Artist was created successfully! ID: {artistToCreate.Id}");
+        }
+
+        private static void GetAllArtists(SampleDbContext dbContext)
+        {
+            // 1. Include(..)
+            //List<Artist> allArtists = dbContext.Artists
+            //    .Include(x => x.Songs.OrderBy(y => y.Name))
+            //    //.Where(x => x.Songs.Count > 0)
+            //    .OrderBy(x => x.Nickname)
+            //    .ToList();
+
+            //foreach (Artist artist in allArtists)
+            //{
+            //    Console.WriteLine($"{artist.Id}: {artist.Nickname} ({artist.FirstName} {artist.LastName})");
+            //    foreach (Song song in artist.Songs)
+            //        Console.WriteLine($"--> {song.Id}: {song.Name}");
+            //}
+
+            // 2. Select(..) with anonymous type(s)
+            var allArtists = dbContext.Artists
+                .Select(a => new
+                {
+                    a.Id,
+                    a.Nickname,
+                    a.FirstName,
+                    a.LastName,
+                    Songs = a.Songs.Select(s => new { s.Id, s.Name }).OrderBy(s => s.Name).ToList(),
+                })
+                .OrderBy(a => a.Nickname)
+                .ToList();
+
+            foreach (var artist in allArtists)
+            {
+                Console.WriteLine($"{artist.Id}: {artist.Nickname} ({artist.FirstName} {artist.LastName})");
+                foreach (var song in artist.Songs)
+                    Console.WriteLine($"--> {song.Id}: {song.Name}");
+            }
         }
 
         private static void Old()
