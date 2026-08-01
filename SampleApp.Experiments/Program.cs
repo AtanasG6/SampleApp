@@ -16,6 +16,9 @@ namespace SampleApp.Experiments
             bool continueProcessingInput = true;
             while (continueProcessingInput)
             {
+                // EF Core might be loading navigational properties from the cache, so we need to clear the ChangeTracker to ensure we get fresh data from the database.
+                dbContext.ChangeTracker.Clear();
+
                 PrintMenu();
                 string input = Console.ReadLine().Trim();
 
