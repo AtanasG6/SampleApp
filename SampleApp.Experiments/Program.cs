@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SampleApp.Data;
 using SampleApp.Data.Models;
+using SampleApp.Experiments.Projections;
 
 namespace SampleApp.Experiments
 {
@@ -71,11 +72,39 @@ namespace SampleApp.Experiments
             Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
         }
 
+        //private static void GetAllSongs(SampleDbContext dbContext)
+        //{
+        //    List<Song> allSongs = dbContext.Songs.ToList();
+        //    foreach (var song in allSongs)
+        //        Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.Artist.Nickname}");
+        //}
+
         private static void GetAllSongs(SampleDbContext dbContext)
         {
-            List<Song> allSongs = dbContext.Songs.ToList();
+            // How to download data from referenced tables?
+            // 1. Include(..) - eager loading 
+            // Drawback - it downloads all columns from the referenced table(s)
+            // List<Song> allSongs = dbContext.Songs.Include(x => x.Artist).ToList();
+            // foreach (var song in allSongs)
+            //     Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.Artist.Nickname}");
+
+            // 2. Select(..) with anonymous type(s)
+            // Drawback - it is not possible to return anonymous type(s) from the method
+            // var allSongs = dbContext.Songs.Select(x => new { Id = x.Id, Name = x.Name, ArtistNickname = x.Artist.Nickname }).ToList();
+            // foreach (var song in allSongs)
+            //     Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
+
+            // 3. Select(..) with static type(s)
+            List<SongInfoProjection> allSongs = dbContext.Songs
+                                                         .Select(x => new SongInfoProjection
+                                                         {
+                                                             Id = x.Id,
+                                                             Name = x.Name,
+                                                             ArtistNickname = x.Artist.Nickname
+                                                         })
+                                                         .ToList();
             foreach (var song in allSongs)
-                Console.WriteLine($"{song.Id}: {song.Name}");
+                Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
         }
 
         private static void CreateArtist(SampleDbContext dbContext)
@@ -90,7 +119,7 @@ namespace SampleApp.Experiments
             string nickname = Console.ReadLine();
 
             Artist artistToCreate = new Artist { FirstName = firstName, LastName = lastName, Nickname = nickname, };
-            
+
             dbContext.Artists.Add(artistToCreate);
             dbContext.SaveChanges();
 
