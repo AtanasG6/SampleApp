@@ -6,7 +6,7 @@ namespace SampleApp.Data
     public class SampleDbContext : DbContext
     {
         public SampleDbContext(DbContextOptions<SampleDbContext> options)
-            : base(options) 
+            : base(options)
         {
         }
 
@@ -15,5 +15,7 @@ namespace SampleApp.Data
         }
 
         public DbSet<Song> Songs { get; set; }
+
+        public DbSet<Artist> Artists { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace SampleApp.Experiments
 
                 if (input == "1") CreateSong(dbContext);
                 else if (input == "2") GetAllSongs(dbContext);
+                else if (input == "3") CreateArtist(dbContext);
                 else if (input == "0") continueProcessingInput = false;
                 else Console.WriteLine("Invalid input!");
 
@@ -31,6 +32,7 @@ namespace SampleApp.Experiments
         {
             Console.WriteLine("1. Create song");
             Console.WriteLine("2. Get all songs");
+            Console.WriteLine("3. Create artist");
             Console.WriteLine("0. Exit");
         }
 
@@ -58,7 +60,10 @@ namespace SampleApp.Experiments
             Console.Write("Name: ");
             string name = Console.ReadLine();
 
-            Song songToCreate = new Song { Name = name };
+            Console.Write("Artist ID: ");
+            Guid artistId = Guid.Parse(Console.ReadLine());
+
+            Song songToCreate = new Song { Name = name, ArtistId = artistId };
 
             dbContext.Songs.Add(songToCreate);
             dbContext.SaveChanges();
@@ -71,6 +76,25 @@ namespace SampleApp.Experiments
             List<Song> allSongs = dbContext.Songs.ToList();
             foreach (var song in allSongs)
                 Console.WriteLine($"{song.Id}: {song.Name}");
+        }
+
+        private static void CreateArtist(SampleDbContext dbContext)
+        {
+            Console.Write("First name: ");
+            string firstName = Console.ReadLine();
+
+            Console.Write("Last name: ");
+            string lastName = Console.ReadLine();
+
+            Console.Write("Nickname: ");
+            string nickname = Console.ReadLine();
+
+            Artist artistToCreate = new Artist { FirstName = firstName, LastName = lastName, Nickname = nickname, };
+            
+            dbContext.Artists.Add(artistToCreate);
+            dbContext.SaveChanges();
+
+            Console.WriteLine($"Artist was created successfully! ID: {artistToCreate.Id}");
         }
 
         private static void Old()
