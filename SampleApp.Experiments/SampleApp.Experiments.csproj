@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SampleApp.Data\SampleApp.Data.csproj" />
+    <ProjectReference Include="..\SampleApp.Core\SampleApp.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
