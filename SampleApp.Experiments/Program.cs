@@ -19,6 +19,9 @@ namespace SampleApp.Experiments
             IRepository<Song> songRepository = new Repository<Song>(dbContext);
             ISongService songService = new SongService(songRepository);
 
+            IRepository<Artist> artistRepository = new Repository<Artist>(dbContext);
+            IArtistService artistService = new ArtistService(artistRepository);
+
             IRepository<Genre> genreRepository = new Repository<Genre>(dbContext);
             IGenreService genreService = new GenreService(genreRepository);
 
@@ -33,8 +36,8 @@ namespace SampleApp.Experiments
 
                 if (input == "1") CreateSong(songService, genreService);
                 else if (input == "2") GetAllSongs(songService);
-                else if (input == "3") CreateArtist(dbContext);
-                else if (input == "4") GetAllArtists(dbContext);
+                else if (input == "3") CreateArtist(artistService);
+                else if (input == "4") GetAllArtists(artistService);
                 else if (input == "5") CreateGenre(genreService);
                 else if (input == "6") GetAllGenres(genreService);
                 else if (input == "0") continueProcessingInput = false;
@@ -164,7 +167,26 @@ namespace SampleApp.Experiments
                 Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
         }
 
-        private static void CreateArtist(SampleDbContext dbContext)
+        //private static void CreateArtist(SampleDbContext dbContext)
+        //{
+        //    Console.Write("First name: ");
+        //    string firstName = Console.ReadLine().Trim();
+
+        //    Console.Write("Last name: ");
+        //    string lastName = Console.ReadLine().Trim();
+
+        //    Console.Write("Nickname: ");
+        //    string nickname = Console.ReadLine().Trim();
+
+        //    Artist artistToCreate = new Artist { FirstName = firstName, LastName = lastName, Nickname = nickname, };
+
+        //    dbContext.Artists.Add(artistToCreate);
+        //    dbContext.SaveChanges();
+
+        //    Console.WriteLine($"Artist was created successfully! ID: {artistToCreate.Id}");
+        //}
+
+        private static void CreateArtist(IArtistService artistService)
         {
             Console.Write("First name: ");
             string firstName = Console.ReadLine().Trim();
@@ -177,40 +199,51 @@ namespace SampleApp.Experiments
 
             Artist artistToCreate = new Artist { FirstName = firstName, LastName = lastName, Nickname = nickname, };
 
-            dbContext.Artists.Add(artistToCreate);
-            dbContext.SaveChanges();
+            artistService.Create(artistToCreate);
 
             Console.WriteLine($"Artist was created successfully! ID: {artistToCreate.Id}");
         }
 
-        private static void GetAllArtists(SampleDbContext dbContext)
+        //private static void GetAllArtists(SampleDbContext dbContext)
+        //{
+        //    // 1. Include(..)
+        //    //List<Artist> allArtists = dbContext.Artists
+        //    //    .Include(x => x.Songs.OrderBy(y => y.Name))
+        //    //    //.Where(x => x.Songs.Count > 0)
+        //    //    .OrderBy(x => x.Nickname)
+        //    //    .ToList();
+
+        //    //foreach (Artist artist in allArtists)
+        //    //{
+        //    //    Console.WriteLine($"{artist.Id}: {artist.Nickname} ({artist.FirstName} {artist.LastName})");
+        //    //    foreach (Song song in artist.Songs)
+        //    //        Console.WriteLine($"--> {song.Id}: {song.Name}");
+        //    //}
+
+        //    // 2. Select(..) with anonymous type(s)
+        //    var allArtists = dbContext.Artists
+        //        .Select(a => new
+        //        {
+        //            a.Id,
+        //            a.Nickname,
+        //            a.FirstName,
+        //            a.LastName,
+        //            Songs = a.Songs.Select(s => new { s.Id, s.Name }).OrderBy(s => s.Name).ToList(),
+        //        })
+        //        .OrderBy(a => a.Nickname)
+        //        .ToList();
+
+        //    foreach (var artist in allArtists)
+        //    {
+        //        Console.WriteLine($"{artist.Id}: {artist.Nickname} ({artist.FirstName} {artist.LastName})");
+        //        foreach (var song in artist.Songs)
+        //            Console.WriteLine($"--> {song.Id}: {song.Name}");
+        //    }
+        //}
+
+        private static void GetAllArtists(IArtistService artistService)
         {
-            // 1. Include(..)
-            //List<Artist> allArtists = dbContext.Artists
-            //    .Include(x => x.Songs.OrderBy(y => y.Name))
-            //    //.Where(x => x.Songs.Count > 0)
-            //    .OrderBy(x => x.Nickname)
-            //    .ToList();
-
-            //foreach (Artist artist in allArtists)
-            //{
-            //    Console.WriteLine($"{artist.Id}: {artist.Nickname} ({artist.FirstName} {artist.LastName})");
-            //    foreach (Song song in artist.Songs)
-            //        Console.WriteLine($"--> {song.Id}: {song.Name}");
-            //}
-
-            // 2. Select(..) with anonymous type(s)
-            var allArtists = dbContext.Artists
-                .Select(a => new
-                {
-                    a.Id,
-                    a.Nickname,
-                    a.FirstName,
-                    a.LastName,
-                    Songs = a.Songs.Select(s => new { s.Id, s.Name }).OrderBy(s => s.Name).ToList(),
-                })
-                .OrderBy(a => a.Nickname)
-                .ToList();
+            var allArtists = artistService.GetAll();
 
             foreach (var artist in allArtists)
             {
