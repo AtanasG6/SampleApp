@@ -10,6 +10,6 @@
 
         public Artist Artist { get; set; } = null!; // Navigation property
 
-        // public ICollection<Genre> Genres { get; set; } = new List<Genre>();
+        public ICollection<Genre> Genres { get; set; } = new List<Genre>();
     }
 }

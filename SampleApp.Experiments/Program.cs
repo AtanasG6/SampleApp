@@ -64,7 +64,8 @@ namespace SampleApp.Experiments
 
             SampleDbContext dbContext = new SampleDbContext(optionsBuilder.Options);
             // dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            // dbContext.Database.EnsureCreated();
+            dbContext.Database.Migrate();
 
             return dbContext;
         }
@@ -201,10 +202,10 @@ namespace SampleApp.Experiments
 
         private static void GetAllGenres(SampleDbContext dbContext)
         {
-            //var allGenres = dbContext.Genres.ToList();
+            var allGenres = dbContext.Genres.ToList();
 
-            //foreach (var genre in allGenres)
-            //    Console.WriteLine($"{genre.Id}: {genre.Name}");
+            foreach (var genre in allGenres)
+                Console.WriteLine($"{genre.Id}: {genre.Name}");
         }
 
         private static void Old()
