@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using SampleApp.Data.Sorting;
+using System.Linq.Expressions;
 
 namespace SampleApp.Data.Repositories
 {
@@ -12,5 +13,6 @@ namespace SampleApp.Data.Repositories
 
         IEnumerable<TEntity> GetMany(Expression<Func<TEntity, bool>> filter);
         IEnumerable<TProjection> GetMany<TProjection>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProjection>> projection);
+        IEnumerable<TProjection> GetMany<TProjection>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProjection>> projection, IEnumerable<IOrderClause<TEntity>> orderClauses);
     }
 }

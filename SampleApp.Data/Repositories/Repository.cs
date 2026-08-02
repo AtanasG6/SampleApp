@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using SampleApp.Data.Sorting;
+using SampleApp.Data.Extensions;
+using System.Linq.Expressions;
 
 namespace SampleApp.Data.Repositories
 {
@@ -36,6 +38,11 @@ namespace SampleApp.Data.Repositories
         public IEnumerable<TProjection> GetMany<TProjection>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProjection>> projection)
         {
             return this._dbContext.Set<TEntity>().Where(filter).Select(projection).ToList();
+        }
+
+        public IEnumerable<TProjection> GetMany<TProjection>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProjection>> projection, IEnumerable<IOrderClause<TEntity>> orderClauses)
+        {
+            return this._dbContext.Set<TEntity>().Where(filter).OrderBy(orderClauses).Select(projection).ToList();
         }
     }
 }

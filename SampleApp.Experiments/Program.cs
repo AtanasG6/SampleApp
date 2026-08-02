@@ -19,6 +19,9 @@ namespace SampleApp.Experiments
             IRepository<Song> songRepository = new Repository<Song>(dbContext);
             ISongService songService = new SongService(songRepository);
 
+            IRepository<Genre> genreRepository = new Repository<Genre>(dbContext);
+            IGenreService genreService = new GenreService(genreRepository);
+
             bool continueProcessingInput = true;
             while (continueProcessingInput)
             {
@@ -32,8 +35,8 @@ namespace SampleApp.Experiments
                 else if (input == "2") GetAllSongs(songService);
                 else if (input == "3") CreateArtist(dbContext);
                 else if (input == "4") GetAllArtists(dbContext);
-                // else if (input == "5") CreateGenre(dbContext);
-                else if (input == "6") GetAllGenres(dbContext);
+                else if (input == "5") CreateGenre(genreService);
+                else if (input == "6") GetAllGenres(genreService);
                 else if (input == "0") continueProcessingInput = false;
                 else Console.WriteLine("Invalid input!");
 
@@ -47,6 +50,8 @@ namespace SampleApp.Experiments
             Console.WriteLine("2. Get all songs");
             Console.WriteLine("3. Create artist");
             Console.WriteLine("4. Get all artists with their songs");
+            Console.WriteLine("5. Create genre");
+            Console.WriteLine("6. Get all genres");
             Console.WriteLine("0. Exit");
         }
 
@@ -200,9 +205,28 @@ namespace SampleApp.Experiments
             }
         }
 
-        private static void GetAllGenres(SampleDbContext dbContext)
+        private static void CreateGenre(IGenreService genreService)
         {
-            var allGenres = dbContext.Genres.ToList();
+            Console.Write("Name: ");
+            string name = Console.ReadLine().Trim();
+
+            Genre genreToCreate = new Genre { Name = name };
+            genreService.Create(genreToCreate);
+
+            Console.WriteLine($"Genre was created successfully! ID: {genreToCreate.Id}");
+        }
+
+        //private static void GetAllGenres(SampleDbContext dbContext)
+        //{
+        //    var allGenres = dbContext.Genres.ToList();
+
+        //    foreach (var genre in allGenres)
+        //        Console.WriteLine($"{genre.Id}: {genre.Name}");
+        //}
+
+        private static void GetAllGenres(IGenreService genreService)
+        {
+            var allGenres = genreService.GetAll();
 
             foreach (var genre in allGenres)
                 Console.WriteLine($"{genre.Id}: {genre.Name}");
