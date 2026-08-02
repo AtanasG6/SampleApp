@@ -32,6 +32,8 @@ namespace SampleApp.Experiments
                 else if (input == "2") GetAllSongs(songService);
                 else if (input == "3") CreateArtist(dbContext);
                 else if (input == "4") GetAllArtists(dbContext);
+                // else if (input == "5") CreateGenre(dbContext);
+                else if (input == "6") GetAllGenres(dbContext);
                 else if (input == "0") continueProcessingInput = false;
                 else Console.WriteLine("Invalid input!");
 
@@ -195,6 +197,14 @@ namespace SampleApp.Experiments
                 foreach (var song in artist.Songs)
                     Console.WriteLine($"--> {song.Id}: {song.Name}");
             }
+        }
+
+        private static void GetAllGenres(SampleDbContext dbContext)
+        {
+            //var allGenres = dbContext.Genres.ToList();
+
+            //foreach (var genre in allGenres)
+            //    Console.WriteLine($"{genre.Id}: {genre.Name}");
         }
 
         private static void Old()
