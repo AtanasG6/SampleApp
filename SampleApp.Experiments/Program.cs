@@ -31,7 +31,7 @@ namespace SampleApp.Experiments
                 PrintMenu();
                 string input = Console.ReadLine().Trim();
 
-                if (input == "1") CreateSong(songService);
+                if (input == "1") CreateSong(songService, genreService);
                 else if (input == "2") GetAllSongs(songService);
                 else if (input == "3") CreateArtist(dbContext);
                 else if (input == "4") GetAllArtists(dbContext);
@@ -91,7 +91,7 @@ namespace SampleApp.Experiments
         //    Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
         //}
 
-        private static void CreateSong(ISongService songService)
+        private static void CreateSong(ISongService songService, IGenreService genreService)
         {
             Console.Write("Name: ");
             string name = Console.ReadLine().Trim();
@@ -99,12 +99,27 @@ namespace SampleApp.Experiments
             Console.Write("Artist ID: ");
             Guid artistId = Guid.Parse(Console.ReadLine().Trim());
 
-            Song songToCreate = new Song { Name = name, ArtistId = artistId };
+            Console.Write("Genre IDs (comma-separated): ");
+            Guid[] genreIds = Console.ReadLine()
+                                .Trim()
+                                .Split(", ")
+                                .Select(x => Guid.Parse(x.Trim()))
+                                .ToArray();
 
+            Genre[] genres = genreService.GetByIds(genreIds).ToArray();
+            if (genres.Length != genreIds.Length)
+            {
+                Console.WriteLine("Some of the genres could not be found. The song will not be created.");
+                return;
+            }
+
+            Song songToCreate = new Song { Name = name, ArtistId = artistId, Genres = genres };
+                
             songService.Create(songToCreate);
 
             Console.WriteLine($"Song was created successfully! ID: {songToCreate.Id}");
         }
+
 
         //private static void GetAllSongs(SampleDbContext dbContext)
         //{

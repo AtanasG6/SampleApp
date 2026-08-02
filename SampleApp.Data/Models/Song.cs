@@ -1,6 +1,6 @@
 ﻿namespace SampleApp.Data.Models
 {
-    public class Song
+    public class Song : IIdentifiable
     {
         public Guid Id { get; set; }
 

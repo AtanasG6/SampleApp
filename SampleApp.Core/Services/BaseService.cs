@@ -1,10 +1,11 @@
 ﻿using SampleApp.Core.Interfaces;
+using SampleApp.Data.Models;
 using SampleApp.Data.Repositories;
 
 namespace SampleApp.Core.Services
 {
     public abstract class BaseService<TEntity> : IService<TEntity>
-        where TEntity : class
+        where TEntity : class, IIdentifiable
     {
         protected IRepository<TEntity> Repository { get; }
 
@@ -19,6 +20,11 @@ namespace SampleApp.Core.Services
 
             this.Repository.Create(entity);
             return true;
+        }
+
+        public IEnumerable<TEntity> GetByIds(IEnumerable<Guid> ids)
+        {
+            return this.Repository.GetMany(e => ids.Contains(e.Id));
         }
 
         protected virtual bool IsValid(TEntity entity) => true;

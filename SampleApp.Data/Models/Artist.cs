@@ -1,6 +1,6 @@
 ﻿namespace SampleApp.Data.Models
 {
-    public class Artist
+    public class Artist : IIdentifiable
     {
         public Guid Id { get; set; }
 

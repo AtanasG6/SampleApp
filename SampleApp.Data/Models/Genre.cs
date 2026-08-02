@@ -1,6 +1,6 @@
 ﻿namespace SampleApp.Data.Models
 {
-    public class Genre
+    public class Genre : IIdentifiable
     {
         public Guid Id { get; set; }
 
