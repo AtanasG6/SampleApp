@@ -5,6 +5,6 @@ namespace SampleApp.Core.Interfaces
 {
     public interface ISongService : IService<Song>
     {
-        IEnumerable<SongGeneralInfoProjection> GetAllSongs();
+        IEnumerable<SongGeneralInfoProjection> GetAll();
     }
 }

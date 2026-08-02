@@ -161,7 +161,7 @@ namespace SampleApp.Experiments
 
         private static void GetAllSongs(ISongService songService)
         {
-            List<SongGeneralInfoProjection> allSongs = songService.GetAllSongs().ToList();
+            List<SongGeneralInfoProjection> allSongs = songService.GetAll().ToList();
 
             foreach (var song in allSongs)
                 Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");

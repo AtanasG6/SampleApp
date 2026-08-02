@@ -11,7 +11,7 @@ namespace SampleApp.Core.Services
         {
         }
 
-        public IEnumerable<SongGeneralInfoProjection> GetAllSongs()
+        public IEnumerable<SongGeneralInfoProjection> GetAll()
         {
             return this.Repository.GetMany(
                 _ => true,
