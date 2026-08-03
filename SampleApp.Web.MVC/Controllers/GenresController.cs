@@ -1,6 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SampleApp.Core.Interfaces;
+using SampleApp.Data.Models;
 using SampleApp.Web.ViewModels.Genres;
 
 namespace SampleApp.Web.MVC.Controllers
@@ -18,12 +20,29 @@ namespace SampleApp.Web.MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var genres = this._genreService.GetAll();
             var viewModels = this._mapper.Map<IEnumerable<GenreViewModel>>(genres);
 
             return View(viewModels);
+        }
+
+        [HttpGet("create")]
+        public IActionResult Create()
+        {
+            return this.View();
+        }
+
+        [HttpPost("create")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create([FromForm] GenreInputModel inputModel)
+        {
+            if (!ModelState.IsValid) return View(inputModel);
+
+            var genre = this._mapper.Map<Genre>(inputModel);
+            this._genreService.Create(genre);
+            return this.RedirectToAction(nameof(Index));
         }
 
         /*// GET: Genres/Details/5
@@ -41,29 +60,6 @@ namespace SampleApp.Web.MVC.Controllers
                 return NotFound();
             }
 
-            return View(genre);
-        }
-
-        // GET: Genres/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Genres/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Genre genre)
-        {
-            if (ModelState.IsValid)
-            {
-                genre.Id = Guid.NewGuid();
-                _context.Add(genre);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
             return View(genre);
         }
 
