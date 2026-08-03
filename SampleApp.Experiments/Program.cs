@@ -164,7 +164,7 @@ namespace SampleApp.Experiments
             List<SongGeneralInfoProjection> allSongs = songService.GetAll().ToList();
 
             foreach (var song in allSongs)
-                Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.ArtistNickname}");
+                Console.WriteLine($"{song.Id}: \"{song.Name}\" by {song.Artist.Nickname}");
         }
 
         //private static void CreateArtist(SampleDbContext dbContext)

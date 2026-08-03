@@ -31,6 +31,7 @@ namespace SampleApp.Web.MVC.Controllers
         [HttpGet("create")]
         public IActionResult Create()
         {
+            // 1. Get all "related" entities
             return this.View();
         }
 
