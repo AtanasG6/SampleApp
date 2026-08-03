@@ -1,4 +1,4 @@
-@model SampleApp.Data.Models.Genre
+@model GenreViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -10,6 +10,13 @@
     <h4>Genre</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>

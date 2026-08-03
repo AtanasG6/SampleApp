@@ -61,6 +61,17 @@ namespace SampleApp.Web.MVC.Controllers
             return this.RedirectToAction(nameof(Index));
         }
 
+        [HttpGet("details")]
+        public IActionResult Details(Guid id)
+        {
+            // TODO: Extend with statistics about songs and artists.
+            var genre = this._genreService.GetById(id);
+            if (genre is null) return this.NotFound();
+
+            var viewModel = this._mapper.Map<GenreViewModel>(genre);
+            return this.View(viewModel);
+        }
+
         /*// GET: Genres/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
