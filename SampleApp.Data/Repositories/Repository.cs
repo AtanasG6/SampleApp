@@ -20,6 +20,12 @@ namespace SampleApp.Data.Repositories
             this._dbContext.SaveChanges();
         }
 
+        public void Update(TEntity entity)
+        {
+            this._dbContext.Set<TEntity>().Update(entity);
+            this._dbContext.SaveChanges();
+        }
+
         public void Delete(TEntity entity)
         {
             this._dbContext.Set<TEntity>().Remove(entity);

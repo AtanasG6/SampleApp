@@ -31,7 +31,7 @@ namespace SampleApp.Core.Services
              );
         }
 
-        public GenreGeneralInfoProjection? GetById(Guid id)
+        public GenreGeneralInfoProjection? GetOne(Guid id)
         {
             return this.Repository.Get(
                 g => g.Id == id,

@@ -7,6 +7,7 @@ namespace SampleApp.Data.Repositories
         where TEntity : class
     {
         void Create(TEntity entity);
+        void Update(TEntity entity);
         void Delete(TEntity entity);
 
         TEntity? Get(Expression<Func<TEntity, bool>> filter);

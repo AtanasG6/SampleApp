@@ -8,8 +8,10 @@ namespace SampleApp.Core.Interfaces
         // According to the "Interface Segregation Principle" this method could be moved to a separate interface.
         // Moreover, it `increases` the constraints over the `TEntity` generic parameter.
         IEnumerable<TEntity> GetByIds(IEnumerable<Guid> ids); 
+        TEntity? GetById(Guid id);
 
         bool Create(TEntity entity);
+        bool Update(TEntity entity);
         bool Delete(Guid id);
     }
 }

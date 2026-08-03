@@ -10,7 +10,8 @@ namespace SampleApp.Web.MVC.Mapping
         public GenreProfile() 
         { 
             this.CreateMap<GenreGeneralInfoProjection, GenreViewModel>();
-            this.CreateMap<GenreInputModel, Genre>();
+            this.CreateMap<GenreCreateModel, Genre>();
+            this.CreateMap<Genre, GenreEditModel>();
         }
     }
 }

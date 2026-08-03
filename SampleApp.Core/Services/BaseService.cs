@@ -22,6 +22,14 @@ namespace SampleApp.Core.Services
             return true;
         }
 
+        public bool Update(TEntity entity)
+        {
+            if (!this.IsValid(entity)) return false;
+
+            this.Repository.Update(entity);
+            return true;
+        }
+
         public bool Delete(Guid id)
         {
             var entity = this.Repository.Get(x => x.Id == id);
@@ -34,6 +42,11 @@ namespace SampleApp.Core.Services
         public IEnumerable<TEntity> GetByIds(IEnumerable<Guid> ids)
         {
             return this.Repository.GetMany(e => ids.Contains(e.Id));
+        }
+
+        public TEntity? GetById(Guid id)
+        {
+            return this.Repository.Get(e => e.Id == id);
         }
 
         protected virtual bool IsValid(TEntity entity) => true;
