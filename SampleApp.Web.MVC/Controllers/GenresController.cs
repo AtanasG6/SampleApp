@@ -34,14 +34,30 @@ namespace SampleApp.Web.MVC.Controllers
             return this.View();
         }
 
-        [HttpPost("create")]
-        [ValidateAntiForgeryToken]
+        [HttpPost("create"), ValidateAntiForgeryToken]
         public IActionResult Create([FromForm] GenreInputModel inputModel)
         {
             if (!ModelState.IsValid) return View(inputModel);
 
             var genre = this._mapper.Map<Genre>(inputModel);
             this._genreService.Create(genre);
+            return this.RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet("delete")]
+        public IActionResult Delete(Guid id)
+        {
+            var genre = this._genreService.GetById(id);
+            if (genre is null) return this.NotFound();
+
+            var viewModel = this._mapper.Map<GenreViewModel>(genre);
+            return this.View(viewModel);
+        }
+
+        [HttpPost("delete"), ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(Guid id)
+        {
+            this._genreService.Delete(id);
             return this.RedirectToAction(nameof(Index));
         }
 
@@ -112,39 +128,6 @@ namespace SampleApp.Web.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(genre);
-        }
-
-        // GET: Genres/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var genre = await _context.Genres
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (genre == null)
-            {
-                return NotFound();
-            }
-
-            return View(genre);
-        }
-
-        // POST: Genres/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var genre = await _context.Genres.FindAsync(id);
-            if (genre != null)
-            {
-                _context.Genres.Remove(genre);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool GenreExists(Guid id)

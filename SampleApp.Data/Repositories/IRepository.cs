@@ -7,6 +7,7 @@ namespace SampleApp.Data.Repositories
         where TEntity : class
     {
         void Create(TEntity entity);
+        void Delete(TEntity entity);
 
         TEntity? Get(Expression<Func<TEntity, bool>> filter);
         TProjection? Get<TProjection>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProjection>> projection);

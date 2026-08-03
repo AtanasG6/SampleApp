@@ -10,5 +10,6 @@ namespace SampleApp.Core.Interfaces
         IEnumerable<TEntity> GetByIds(IEnumerable<Guid> ids); 
 
         bool Create(TEntity entity);
+        bool Delete(Guid id);
     }
 }

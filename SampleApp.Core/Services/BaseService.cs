@@ -22,6 +22,15 @@ namespace SampleApp.Core.Services
             return true;
         }
 
+        public bool Delete(Guid id)
+        {
+            var entity = this.Repository.Get(x => x.Id == id);
+            if (entity is null) return false;
+
+            this.Repository.Delete(entity);
+            return true;
+        }
+
         public IEnumerable<TEntity> GetByIds(IEnumerable<Guid> ids)
         {
             return this.Repository.GetMany(e => ids.Contains(e.Id));

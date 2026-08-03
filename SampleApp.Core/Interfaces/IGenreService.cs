@@ -6,5 +6,6 @@ namespace SampleApp.Core.Interfaces
     public interface IGenreService : IService<Genre>
     {
         IEnumerable<GenreGeneralInfoProjection> GetAll();
+        GenreGeneralInfoProjection? GetById(Guid id);
     }
 }

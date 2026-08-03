@@ -20,6 +20,12 @@ namespace SampleApp.Data.Repositories
             this._dbContext.SaveChanges();
         }
 
+        public void Delete(TEntity entity)
+        {
+            this._dbContext.Set<TEntity>().Remove(entity);
+            this._dbContext.SaveChanges();
+        }
+
         public TEntity? Get(Expression<Func<TEntity, bool>> filter)
         {
             return this._dbContext.Set<TEntity>().Where(filter).FirstOrDefault();

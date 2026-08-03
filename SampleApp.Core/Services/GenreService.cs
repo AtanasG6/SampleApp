@@ -21,7 +21,6 @@ namespace SampleApp.Core.Services
             };
 
             return this.Repository.GetMany(
-
                 _ => true,
                 g => new GenreGeneralInfoProjection
                 {
@@ -30,6 +29,18 @@ namespace SampleApp.Core.Services
                 },
                 new[] { nameOrderClause }
              );
+        }
+
+        public GenreGeneralInfoProjection? GetById(Guid id)
+        {
+            return this.Repository.Get(
+                g => g.Id == id,
+                g => new GenreGeneralInfoProjection
+                {
+                    Id = g.Id,
+                    Name = g.Name
+                }
+            );
         }
     }
 }
