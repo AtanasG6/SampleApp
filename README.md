@@ -1,6 +1,6 @@
 # SampleApp
 
-A small music catalogue – artists, songs and genres – used as a playground for Entity Framework Core and ASP.NET Core MVC. Every layer is a separate project, so the same data can be reached from a console menu and from a web page and you can watch what SQL each of them produces.
+A small music catalogue – artists, songs and genres – used as a playground for Entity Framework Core and ASP.NET Core MVC. The same data is reachable from a console menu and from a web page, so you can watch what SQL each of them produces.
 
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)
 ![EF Core](https://img.shields.io/badge/EF%20Core-10.0.10-512BD4?logo=nuget&logoColor=white)
@@ -12,18 +12,17 @@ A small music catalogue – artists, songs and genres – used as a playground f
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=AtanasG6_SampleApp&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=AtanasG6_SampleApp)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=AtanasG6_SampleApp&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=AtanasG6_SampleApp)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=AtanasG6_SampleApp&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=AtanasG6_SampleApp)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=AtanasG6_SampleApp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=AtanasG6_SampleApp)
 
-## How the projects fit together
+## Projects
 
 ```mermaid
 flowchart TD
-    MVC["SampleApp.Web.MVC<br/><small>controllers, Razor views, AutoMapper profiles</small>"]
-    VM["SampleApp.Web.ViewModels<br/><small>view models and input models</small>"]
-    EXP["SampleApp.Experiments<br/><small>console menu for trying queries</small>"]
-    CORE["SampleApp.Core<br/><small>services, projections, validation</small>"]
-    DATA["SampleApp.Data<br/><small>DbContext, entities, migrations, repository</small>"]
-    DB[("SQL Server<br/>music")]
+    MVC["SampleApp.Web.MVC"]
+    VM["SampleApp.Web.ViewModels"]
+    EXP["SampleApp.Experiments"]
+    CORE["SampleApp.Core"]
+    DATA["SampleApp.Data"]
+    DB[("SQL Server")]
 
     MVC --> VM
     MVC --> CORE
@@ -32,7 +31,7 @@ flowchart TD
     DATA --> DB
 ```
 
-The arrows only point downwards. `SampleApp.Data` knows nothing about the layers above it, and `SampleApp.Core` never returns an entity to the web layer – it returns a projection, which the controller maps to a view model.
+`SampleApp.Core` never returns an entity to the web layer – it returns a projection, which the controller maps to a view model.
 
 ## Domain model
 
@@ -58,16 +57,16 @@ erDiagram
     }
 ```
 
-The many-to-many between songs and genres has no class of its own – EF Core creates the `GenreSong` join table by convention from the two collection navigations. All keys are `Guid`, generated on the client by `SequentialGuidValueGenerator`, so a new entity already has its id before `SaveChanges` is called.
+The join table `GenreSong` has no class of its own – EF Core creates it by convention from the two collection navigations.
 
-## What a request goes through
+## A request
 
 ```mermaid
 sequenceDiagram
     participant B as Browser
     participant C as GenresController
     participant S as GenreService
-    participant R as Repository&lt;Genre&gt;
+    participant R as Genre repository
     participant DB as SQL Server
 
     B->>C: GET /genres
@@ -75,53 +74,35 @@ sequenceDiagram
     S->>R: GetMany(filter, projection, order)
     R->>DB: SELECT Id, Name FROM Genres ORDER BY Name
     DB-->>R: rows
-    R-->>S: GenreGeneralInfoProjection[]
+    R-->>S: projections
     S-->>C: projections
-    C->>C: AutoMapper: projection to view model
     C-->>B: rendered Razor view
 ```
 
-Because the projection is not an entity, the query is automatically no-tracking and only the columns that are actually displayed leave the database.
+## Where to look
 
-## Things demonstrated here
-
-| Topic | Where to look |
+| Topic | File |
 | --- | --- |
-| Projections instead of `Include` | `SampleApp.Core/Services/*Service.cs` – the commented alternatives are kept on purpose |
-| Change tracker states | `SampleApp.Experiments/Program.cs` – entries in `Added` state before `SaveChanges` |
-| Migrations vs `EnsureCreated` | `SampleApp.Data/Migrations` and `InitializeDatabase` in the console project |
-| Many-to-many by convention | `Song.Genres` / `Genre.Songs`, migration `AddGenre` |
+| Projections instead of `Include` | `SampleApp.Core/Services` |
+| Change tracker states | `SampleApp.Experiments/Program.cs` |
+| Migrations vs `EnsureCreated` | `SampleApp.Data/Migrations` |
+| Many-to-many by convention | `Song.Genres`, `Genre.Songs` |
 | Generic repository with sorting | `SampleApp.Data/Repositories`, `SampleApp.Data/Sorting` |
-| Reading the generated SQL | `optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information)` |
 | Separate input and view models | `SampleApp.Web.ViewModels/Genres` |
 
-## Getting started
+## Running it
 
-You need the [.NET 10 SDK](https://dotnet.microsoft.com/download), a SQL Server instance reachable at `.`, and the EF Core CLI:
-
-```bash
-dotnet tool install --global dotnet-ef
-```
-
-The connection string is hardcoded in `SampleApp.Web.MVC/Program.cs` and in `SampleApp.Experiments/Program.cs`:
-
-```
-Server=.;Database=music;Integrated Security=True;TrustServerCertificate=True
-```
-
-Create the database. The design time factory takes the connection string as an argument, and `Microsoft.EntityFrameworkCore.Design` lives in `SampleApp.Data`, so that project is both the target and the startup project:
+Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download), SQL Server at `.`, and `dotnet tool install --global dotnet-ef`.
 
 ```bash
 dotnet ef database update --project SampleApp.Data --startup-project SampleApp.Data -- "Server=.;Database=music;Integrated Security=True;TrustServerCertificate=True"
 ```
 
-Then run the web application:
-
 ```bash
 dotnet run --project SampleApp.Web.MVC
 ```
 
-Or the console menu, which applies the migrations itself on startup and prints every SQL statement it sends:
+The console menu applies the migrations itself and prints every SQL statement it sends:
 
 ```bash
 dotnet run --project SampleApp.Experiments
@@ -129,11 +110,4 @@ dotnet run --project SampleApp.Experiments
 
 ## Code quality
 
-Every push to `master` and every pull request is analysed by [SonarQube Cloud](https://sonarcloud.io/summary/overall?id=AtanasG6_SampleApp) through Automatic Analysis, so findings arrive as pull request comments without any CI configuration.
-
-## Known gaps
-
-- The connection string is not read from `appsettings.json` yet
-- `Artist` has no repository or service registration in the web project, so `ArtistsController.Details` is still a stub
-- Songs and artists have no create, edit or delete pages – only genres do
-- No test projects, so there is no coverage to report
+Analysed by [SonarQube Cloud](https://sonarcloud.io/summary/overall?id=AtanasG6_SampleApp) on every push and pull request.
