@@ -64,6 +64,9 @@ namespace SampleApp.Web.MVC
         }
         private static void RegisteredServices(WebApplicationBuilder builder)
         {
+            builder.Services.AddScoped<IRepository<Artist>, Repository<Artist>>();
+            builder.Services.AddScoped<IArtistService, ArtistService>();
+
             builder.Services.AddScoped<IRepository<Genre>, Repository<Genre>>();
             builder.Services.AddScoped<IGenreService, GenreService>();
 

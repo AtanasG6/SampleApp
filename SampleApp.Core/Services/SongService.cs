@@ -1,5 +1,6 @@
 ﻿using SampleApp.Core.Interfaces;
 using SampleApp.Core.Projections.Artists;
+using SampleApp.Core.Projections.Genres;
 using SampleApp.Core.Projections.Songs;
 using SampleApp.Data.Models;
 using SampleApp.Data.Repositories;
@@ -24,7 +25,12 @@ namespace SampleApp.Core.Services
                     {
                         Id = s.Artist.Id,
                         Nickname = s.Artist.Nickname
-                    }
+                    },
+                    Genres = s.Genres.Select(g => new GenreMinifiedProjection
+                    {
+                        Id = g.Id,
+                        Name = g.Name
+                    }).ToList()
                 });
         }
     }

@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Artist)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genres)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -29,8 +32,16 @@
                     @Html.DisplayFor(modelItem => viewModel.Name)
                 </td>
                 <td>
-@*                     @Html.ActionLink(viewModel.Artist.Nickname, "Details", "Artists", new { id = viewModel.Artist.Id }) *@
+                    @*                     @Html.ActionLink(viewModel.Artist.Nickname, "Details", "Artists", new { id = viewModel.Artist.Id }) *@
                     <a asp-controller="Artists" asp-action="Details" asp-route-id="@viewModel.Artist.Id">@viewModel.Artist.Nickname</a>
+                </td>
+                <td>
+                    @foreach (var genre in viewModel.Genres)
+                    {
+                        <div>
+                            <a asp-controller="Genres" asp-action="Details" asp-route-id="@genre.Id">@genre.Name</a>
+                        </div>
+                    }
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@viewModel.Id">Edit</a> |
