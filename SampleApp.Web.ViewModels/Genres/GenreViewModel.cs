@@ -9,5 +9,8 @@ namespace SampleApp.Web.ViewModels.Genres
 
         [DisplayName("Count of songs")]
         public required long SongsCount { get; init; }
+
+        [DisplayName("Count of artists")]
+        public required long ArtistsCount { get; init; }
     }
 }

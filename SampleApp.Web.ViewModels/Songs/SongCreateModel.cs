@@ -4,6 +4,6 @@
     {
         public required string Name { get; init; }
         public required Guid Artist { get; init; }
-        public required IEnumerable<Guid> Genres { get; init; }
+        public required Guid[] Genres { get; init; }
     }
 }

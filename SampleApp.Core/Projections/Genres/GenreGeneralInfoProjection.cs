@@ -7,5 +7,7 @@
         public required string Name { get; init; }
 
         public required long SongsCount { get; init; }
+
+        public required long ArtistsCount { get; init; }
     }
 }

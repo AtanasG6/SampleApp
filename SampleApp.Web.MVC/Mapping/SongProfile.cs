@@ -10,6 +10,7 @@ namespace SampleApp.Web.MVC.Mapping
         public SongProfile()
         {
             this.CreateMap<SongGeneralInfoProjection, SongViewModel>();
+            this.CreateMap<SongMinifiedProjection, SongMinifiedViewModel>();
             this.CreateMap<SongCreateModel, Song>()
                 .ForMember(x => x.Artist, conf => conf.Ignore())
                 .ForMember(x => x.Genres, conf => conf.Ignore());

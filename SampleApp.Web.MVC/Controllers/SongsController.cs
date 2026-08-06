@@ -55,6 +55,8 @@ namespace SampleApp.Web.MVC.Controllers
             if (artist is null) throw new InvalidOperationException("Artist not found");
 
             var genres = this._genreService.GetByIds(inputModel.Genres).ToArray();
+            if(genres.Length != inputModel.Genres.Length)
+                throw new InvalidOperationException("Some of the genres are not found");
 
             var song = this._mapper.Map<Song>(inputModel);
             song.Artist = artist;
@@ -63,6 +65,23 @@ namespace SampleApp.Web.MVC.Controllers
             this._songService.Create(song);
 
             return this.RedirectToAction(nameof(Index));  
+        }
+
+        [HttpGet("delete")]
+        public IActionResult Delete(Guid id)
+        {
+            var song = this._songService.GetOneMinified(id);
+            if (song is null) return this.NotFound();
+
+            var viewModel = this._mapper.Map<SongMinifiedViewModel>(song);
+            return this.View(viewModel);
+        }
+
+        [HttpPost("delete"), ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(Guid id)
+        {
+            this._songService.Delete(id);
+            return this.RedirectToAction(nameof(Index));
         }
 
         private SongFormViewModel PrepareFormViewModel(SongCreateModel? inputModel = null)

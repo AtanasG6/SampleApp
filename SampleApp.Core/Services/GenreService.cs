@@ -65,7 +65,8 @@ namespace SampleApp.Core.Services
             {
                 Id = g.Id,
                 Name = g.Name,
-                SongsCount = g.Songs.LongCount()
+                SongsCount = g.Songs.LongCount(),
+                ArtistsCount = g.Songs.Select(s => s.ArtistId).Distinct().LongCount()
             };
         }
 
