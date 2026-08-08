@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SampleApp.Core.Projections.Genres
+﻿namespace SampleApp.Core.Projections.Genres
 {
     public record GenreEditProjection
     {
