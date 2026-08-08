@@ -3,10 +3,10 @@ using SampleApp.Web.ViewModels.Genres;
 
 namespace SampleApp.Web.ViewModels.Songs
 {
-    public record SongFormViewModel
+    public record SongFormViewModel<TInputModel>
     {
-        public SongCreateModel? InputModel { get; init; }
         public required IEnumerable<ArtistMinifiedViewModel> Artists { get; init; }
         public required IEnumerable<GenreMinifiedViewModel> Genres { get; init; }
+        public TInputModel? InputModel { get; init; }
     }
 }

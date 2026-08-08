@@ -78,5 +78,17 @@ namespace SampleApp.Core.Services
                 Name = g.Name
             };
         }
+
+        public GenreEditProjection? GetOneEdit(Guid id)
+        {
+            return this.Repository.Get(
+                g => g.Id == id,
+                g => new GenreEditProjection
+                {
+                    Id = g.Id,
+                    Name = g.Name
+                }
+            );
+        }
     }
 }

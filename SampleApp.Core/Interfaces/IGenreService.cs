@@ -10,5 +10,7 @@ namespace SampleApp.Core.Interfaces
 
         IEnumerable<GenreMinifiedProjection> GetAllMinified();
         GenreMinifiedProjection? GetOneMinified(Guid id);
+
+        GenreEditProjection? GetOneEdit(Guid id);
     }
 }

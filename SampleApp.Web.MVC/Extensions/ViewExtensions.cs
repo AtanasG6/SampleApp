@@ -7,13 +7,10 @@ namespace SampleApp.Web.MVC.Extensions
         public static IEnumerable<SelectListItem> ConstructListItems<T>(
             this IEnumerable<T> items,
             Func<T, string> valueSelector,
-            Func<T, string> nameSelector,
-            string? selectedValue = null)
+            Func<T, string> nameSelector)
         {
-            if (string.IsNullOrWhiteSpace(selectedValue))
-            {
-                yield return new SelectListItem(string.Empty, string.Empty, selected: true);
-            }
+
+            yield return new SelectListItem(string.Empty, string.Empty);
 
             foreach (var item in items)
             {
@@ -21,8 +18,7 @@ namespace SampleApp.Web.MVC.Extensions
 
                 yield return new SelectListItem(
                     nameSelector(item),
-                    value,
-                    selected: value == selectedValue);
+                    value);
             }
         }
     }

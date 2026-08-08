@@ -1,6 +1,8 @@
 ﻿using SampleApp.Data.Sorting;
 using SampleApp.Data.Extensions;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
 
 namespace SampleApp.Data.Repositories
 {
@@ -41,6 +43,28 @@ namespace SampleApp.Data.Repositories
         {
             return this._dbContext.Set<TEntity>().Where(filter).Select(projection).FirstOrDefault();
         }
+
+        public TEntity? GetComplete(Expression<Func<TEntity, bool>> filter)
+        {
+            IEntityType? entityType = this._dbContext.Model.FindEntityType(typeof(TEntity));
+            if (entityType is null) throw new InvalidOperationException("Invalid entity type.");
+
+            IEnumerable<string> navigations = entityType.GetNavigations().Select(x => x.Name)
+                .Concat(entityType.GetSkipNavigations().Select(x => x.Name));
+
+            return this.GetWithNavigations(filter, navigations);
+        }
+
+        public TEntity? GetWithNavigations(Expression<Func<TEntity, bool>> filter, IEnumerable<string> navigations)
+        {
+            IQueryable<TEntity> query = this._dbContext.Set<TEntity>().Where(filter);
+
+            foreach (string navigation in navigations)
+                query = query.Include(navigation);
+
+            return query.FirstOrDefault();
+        }
+
 
         public IEnumerable<TEntity> GetMany(Expression<Func<TEntity, bool>> filter)
         {

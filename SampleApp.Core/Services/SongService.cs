@@ -5,6 +5,7 @@ using SampleApp.Core.Projections.Songs;
 using SampleApp.Data.Models;
 using SampleApp.Data.Repositories;
 using SampleApp.Data.Sorting;
+using System.Linq.Expressions;
 
 namespace SampleApp.Core.Services
 {
@@ -21,22 +22,30 @@ namespace SampleApp.Core.Services
 
             return this.Repository.GetMany(
                 _ => true,
-                s => new SongGeneralInfoProjection
+                this.GetGeneralInfoProjection(),
+                new[] { nameOrderClause, artistOrderClause }
+            );
+        }
+
+        public SongGeneralInfoProjection? GetOne(Guid id)
+        {
+            return this.Repository.Get(
+                s => s.Id == id,
+                this.GetGeneralInfoProjection()
+            );
+        }
+
+        public SongEditProjection? GetOneEdit(Guid id)
+        {
+            return this.Repository.Get(
+                s => s.Id == id,
+                s => new SongEditProjection
                 {
                     Id = s.Id,
                     Name = s.Name,
-                    Artist = new ArtistMinifiedProjection
-                    {
-                        Id = s.Artist.Id,
-                        Nickname = s.Artist.Nickname
-                    },
-                    Genres = s.Genres.Select(g => new GenreMinifiedProjection
-                    {
-                        Id = g.Id,
-                        Name = g.Name
-                    }).ToList()
-                },
-                new[] { nameOrderClause, artistOrderClause }
+                    ArtistId = s.ArtistId,
+                    GenreIds = s.Genres.Select(g => g.Id)
+                }
             );
         }
 
@@ -50,6 +59,25 @@ namespace SampleApp.Core.Services
                     Name = s.Name
                 }
             );
+        }
+
+        private Expression<Func<Song, SongGeneralInfoProjection>> GetGeneralInfoProjection()
+        {
+            return s => new SongGeneralInfoProjection
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Artist = new ArtistMinifiedProjection
+                {
+                    Id = s.Artist.Id,
+                    Nickname = s.Artist.Nickname
+                },
+                Genres = s.Genres.Select(g => new GenreMinifiedProjection
+                {
+                    Id = g.Id,
+                    Name = g.Name
+                }).ToList()
+            };
         }
     }
 }

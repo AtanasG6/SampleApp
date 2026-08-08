@@ -12,7 +12,7 @@ namespace SampleApp.Web.MVC.Mapping
             this.CreateMap<GenreGeneralInfoProjection, GenreViewModel>();
             this.CreateMap<GenreMinifiedProjection, GenreMinifiedViewModel>();
             this.CreateMap<GenreCreateModel, Genre>();
-            this.CreateMap<Genre, GenreEditModel>();
+            this.CreateMap<GenreEditProjection, GenreEditModel>();
         }
     }
 }

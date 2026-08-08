@@ -14,6 +14,9 @@ namespace SampleApp.Web.MVC.Mapping
             this.CreateMap<SongCreateModel, Song>()
                 .ForMember(x => x.Artist, conf => conf.Ignore())
                 .ForMember(x => x.Genres, conf => conf.Ignore());
+            this.CreateMap<SongEditProjection, SongEditModel>()
+                .ForMember(x => x.Artist, conf => conf.MapFrom(y => y.ArtistId))
+                .ForMember(x => x.Genres, conf => conf.MapFrom(y => y.GenreIds));
         }
     }
 }
